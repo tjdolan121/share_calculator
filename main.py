@@ -32,21 +32,20 @@ shares_sold = 0  # -> renamed to shares_to_sell
 
 # This section gets you up to the sheltered tax fund target
 while sheltered_tax_fund_shortfall(context) > 0 and i < 4:
-    bucket_shares = shares_to_sell(context['buckets'][i], context)
+    bucket_shares = shares_to_sell(context['buckets'][i], context, sheltered_tax_fund_shortfall(context))
     # calculate our losses or gains
     context = sell_shares(context, i, bucket_shares)
     if context['buckets'][i]['quantity'] == 0:
         i += 1
 
-# todo - handle the case where we can't get enough capital gains to balance our capital losses (like tell the user or someting)
-# This section sells enough shares to cover for capital losses (assumes that there are some buckets left you can sell at a profit)
+# todo - handle the case where we can't get enough capital gains to balance our capital
+#  losses (like tell the user or someting)
+# This section sells enough shares to cover for capital losses (assumes that there are
+# some buckets left you can sell at a profit)
+
 while losses_to_cover(context) > 0 and i < 4:
     # calculate how many shares to sell
-    if buckets[i][0] < SHARE_PRICE and losses_to_cover(context) < buckets[i][1] * (
-            SHARE_PRICE - buckets[i][0]):  # only need to sell part of the bucket
-        bucket_shares = losses_to_cover(context) / (SHARE_PRICE - buckets[i][0])
-    else:  # sell whole bucket (if its at a loss, or you need to sell this whole bucket and then some)
-        bucket_shares = buckets[i][1]
+    bucket_shares = shares_to_sell(context['buckets'][i], context, losses_to_cover(context))
 
     # calculate losses or gains
     if buckets[i][0] > SHARE_PRICE:

@@ -13,9 +13,9 @@ def returns(bucket, share_price):
     return (share_price - bucket['cost_basis']) * bucket['quantity']
 
 
-def shares_to_sell(bucket, context):
+def shares_to_sell(bucket, context, fund):
     if bucket['cost_basis'] < context['share_price'] and \
-            cm.sheltered_tax_fund_shortfall(context) < returns(bucket, context['share_price']):
-        return cm.sheltered_tax_fund_shortfall(context) / (context['share_price'] - bucket['cost_basis'])
+            fund < returns(bucket, context['share_price']):
+        return fund / (context['share_price'] - bucket['cost_basis'])
     else:
         return bucket['quantity']
